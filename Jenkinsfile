@@ -79,9 +79,32 @@ pipeline {
     post {
         success {
             echo "Build, analysis, coverage, and complexity analysis completed successfully!"
+            emailext(
+                subject: "Jenkins Build SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: """<h3>SUCCESS: Jenkins Pipeline</h3>
+                         <p>Job: ${env.JOB_NAME}</p>
+                         <p>Build Number: ${env.BUILD_NUMBER}</p>
+                         <p>Status: SUCCESS ✅</p>
+                         <p><a href="${env.BUILD_URL}">Click here to view build</a></p>""",
+                recipientProviders: [[$class: 'DevelopersRecipientProvider'], [$class: 'RequesterRecipientProvider']],
+                to: 'ajaykrr0706@gmail.com',
+                mimeType: 'text/html'
+            )
         }
+
         failure {
             echo "Pipeline execution failed! Check logs and reports for details."
+            emailext(
+                subject: "Jenkins Build FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: """<h3>FAILED: Jenkins Pipeline</h3>
+                         <p>Job: ${env.JOB_NAME}</p>
+                         <p>Build Number: ${env.BUILD_NUMBER}</p>
+                         <p>Status: FAILURE ❌</p>
+                         <p><a href="${env.BUILD_URL}">Click here to view build logs</a></p>""",
+                recipientProviders: [[$class: 'DevelopersRecipientProvider'], [$class: 'RequesterRecipientProvider']],
+                to: 'ajaykrr0706@gmail.com',
+                mimeType: 'text/html'
+            )
         }
     }
 }
