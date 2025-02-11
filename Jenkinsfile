@@ -20,11 +20,11 @@ pipeline {
 
         stage('Code Analysis') {
             environment {
-                scannerHome = tool 'Sonar'
+                scannerHome = tool 'sonar'
             }
             steps {
                 script {
-                    withSonarQubeEnv('Sonar') {
+                    withSonarQubeEnv('sonar') {
                         sh "${scannerHome}/bin/sonar-scanner \
                             -Dsonar.projectKey=java-assingment \
                             -Dsonar.projectName=java-assingment \
