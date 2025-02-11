@@ -3,7 +3,6 @@ pipeline {
 
     tools {
         maven 'maven'  // Use the Maven tool configured in Jenkins
-        OWASP 'OWASP'
     }
 
     stages {
