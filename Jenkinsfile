@@ -29,7 +29,8 @@ pipeline {
                             -Dsonar.projectKey=java-assingment \
                             -Dsonar.projectName=java-assingment \
                             -Dsonar.projectVersion=1.0 \
-                            -Dsonar.sources=."
+                            -Dsonar.sources=src \
+                            -Dsonar.java.binaries=target/classes"
                     }
                 }
             }
