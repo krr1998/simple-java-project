@@ -14,7 +14,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'mvn clean compile'
+                sh 'mvn clean verify'
             }
         }
 
@@ -34,6 +34,29 @@ pipeline {
                     }
                 }
             }
+        }
+
+        stage('Code Coverage') {
+            steps {
+                script {
+                    jacoco(
+                        execPattern: '**/target/jacoco.exec',
+                        classPattern: '**/target/classes',
+                        sourcePattern: '**/src/main/java',
+                        inclusionPattern: '**/*.class',
+                        exclusionPattern: '**/test/**/*.class'
+                    )
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "Build and analysis completed successfully!"
+        }
+        failure {
+            echo "Build failed! Check logs for details."
         }
     }
 }
