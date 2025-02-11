@@ -52,7 +52,7 @@ pipeline {
 
         stage('Cyclomatic Complexity Analysis') {
             steps {
-                sh 'lizard . > complexity_report.txt' // Scans the whole project directory
+                sh 'python3 -m lizard . > complexity_report.txt' // Scans the whole project directory
                 archiveArtifacts artifacts: 'complexity_report.txt', fingerprint: true
             }
         }
