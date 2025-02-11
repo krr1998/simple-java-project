@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        maven 'maven'  // Use the configured Maven installation from Jenkins Global Tool Configuration
+        maven 'maven'  // Use the Maven tool configured in Jenkins
     }
 
     stages {
@@ -14,13 +14,13 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'mvn clean verify' // Runs tests and generates coverage reports
+                sh 'mvn clean verify'
             }
         }
 
         stage('Code Analysis') {
             environment {
-                scannerHome = tool 'sonar'  // SonarQube installation in Jenkins
+                scannerHome = tool 'sonar'
             }
             steps {
                 script {
@@ -30,7 +30,7 @@ pipeline {
                             -Dsonar.projectName=java-assingment \
                             -Dsonar.projectVersion=1.0 \
                             -Dsonar.sources=. \
-                            -Dsonar.java.binaries=target/classes"
+                            -Dsonar.java.binaries=."
                     }
                 }
             }
@@ -52,8 +52,13 @@ pipeline {
 
         stage('Cyclomatic Complexity Analysis') {
             steps {
-                // sh 'pip install lizard'
-                sh 'lizard' // Scans the whole project directory
+                script {
+                    // Run Lizard, print output to console & save in a file
+                    def result = sh(script: 'lizard | tee complexity_report.txt', returnStatus: true)
+                    if (result != 0) {
+                        error "Lizard execution failed! Check complexity_report.txt for details."
+                    }
+                }
                 archiveArtifacts artifacts: 'complexity_report.txt', fingerprint: true
             }
         }
@@ -61,10 +66,10 @@ pipeline {
 
     post {
         success {
-            echo "Pipeline execution completed successfully!"
+            echo "Build, analysis, coverage, and complexity analysis completed successfully!"
         }
         failure {
-            echo "Pipeline execution failed! Check logs for details."
+            echo "Pipeline execution failed! Check logs and reports for details."
         }
     }
 }
