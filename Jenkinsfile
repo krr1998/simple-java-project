@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        maven 'maven'  // Use the name from Global Tool Configuration
+        maven 'maven'  // Use the configured Maven installation from Jenkins Global Tool Configuration
     }
 
     stages {
@@ -14,13 +14,13 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'mvn clean verify'
+                sh 'mvn clean verify' // Runs tests and generates coverage reports
             }
         }
 
         stage('Code Analysis') {
             environment {
-                scannerHome = tool 'sonar'
+                scannerHome = tool 'sonar'  // SonarQube installation in Jenkins
             }
             steps {
                 script {
@@ -30,7 +30,7 @@ pipeline {
                             -Dsonar.projectName=java-assingment \
                             -Dsonar.projectVersion=1.0 \
                             -Dsonar.sources=. \
-                            -Dsonar.java.binaries=."
+                            -Dsonar.java.binaries=target/classes"
                     }
                 }
             }
@@ -49,14 +49,21 @@ pipeline {
                 }
             }
         }
+
+        stage('Cyclomatic Complexity Analysis') {
+            steps {
+                sh 'lizard . > complexity_report.txt' // Scans the whole project directory
+                archiveArtifacts artifacts: 'complexity_report.txt', fingerprint: true
+            }
+        }
     }
 
     post {
         success {
-            echo "Build and analysis completed successfully!"
+            echo "Pipeline execution completed successfully!"
         }
         failure {
-            echo "Build failed! Check logs for details."
+            echo "Pipeline execution failed! Check logs for details."
         }
     }
 }
