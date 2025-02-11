@@ -53,13 +53,14 @@ pipeline {
         stage('Cyclomatic Complexity Analysis') {
             steps {
                 script {
-                    // Run Lizard, print output to console & save in a file
-                    def result = sh(script: 'lizard | tee complexity_report.txt', returnStatus: true)
+                    // Run Lizard and generate HTML report
+                    def result = sh(script: 'lizard . -H > complexity_report.html', returnStatus: true)
                     if (result != 0) {
-                        error "Lizard execution failed! Check complexity_report.txt for details."
+                        error "Lizard execution failed! Check complexity_report.html for details."
                     }
                 }
-                archiveArtifacts artifacts: 'complexity_report.txt', fingerprint: true
+                // Archive the HTML report
+                archiveArtifacts artifacts: 'complexity_report.html', fingerprint: true
             }
         }
     }
