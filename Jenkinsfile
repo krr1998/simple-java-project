@@ -29,6 +29,7 @@ pipeline {
                             -Dsonar.projectKey=java-assingment \
                             -Dsonar.projectName=java-assingment \
                             -Dsonar.projectVersion=1.0 \
+                            -Dsonar.qualitygate.wait=true \
                             -Dsonar.sources=. \
                             -Dsonar.java.binaries=."
                     }
